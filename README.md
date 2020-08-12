@@ -1,6 +1,6 @@
 # PostgreSQL DB cluster in Docker containers
 ## Overview
-This repository provides a set of useful scripts that allow you to set up and manage PostgreSQL DB cluster with WAL streaming replication using PostgreSQL slots under the Windows operating system. These scripts are only supposed to be used for testing and development purposes.
+This repository provides a set of useful scripts that allow you to set up and manage PostgreSQL DB cluster with WAL streaming replication and slots under the Windows operating system. These scripts are only supposed to be used for testing and development purposes.
 - The cluster includes two Docker containers - p1 and p2.
 - Each container publishes a PostgreSQL database that can be reached at localhost: 1111 and localhost: 2222 respectively.
 - Data folder of the DB is located at `/var/lib/postgresql/data/pgdata/` directory. This directory can be assigned to a Docker volume.
