@@ -4,8 +4,9 @@ This repository provides a set of useful scripts that allow you to set up and ma
 - The cluster includes two Docker containers - p1 and p2.
 - Each container publishes a PostgreSQL database that can be reached at localhost: 1111 and localhost: 2222 respectively.
 - Data folder of the DB is located at `/var/lib/postgresql/data/pgdata/` directory. This directory can be assigned to a Docker volume.
+
 ![](https://github.com/treshnikov/postgresql_wal_replication/blob/master/img/demo.png)
-## Manage
+## How to use
 - Use `create_cluster.bat` to create containers. After the cluster is created container p1 will be defined as a master and p2 as a standby. Take in mind that this script invokes `docker volume prune -f` to drop unused volumes.
 - Use `update_synchronous_standby_names_on_master.bat` if the standby server is down or it was down and appears again to let the main server keep performing transactions with or without approvement of the standby server. Otherwise, you can face the case when an incoming transaction on master DB is frozen until the standby (which is down) approves the transaction.
 - Use `promote_standby_to_master.bat` to promote the standby server to master. This script automatically detects the standby node and applies commands. The container with the master DB will be stopped.
