@@ -58,20 +58,27 @@ docker exec p2 bash -c "du -sh /var/lib/postgresql/data/pgdata/pg_wal | cut -d '
 set /p p2PgWalSize=<out.txt
 
 del "out.txt" >nul 2>&1
-echo Container: p1
+docker exec p1 bash -c "psql -U postgres -qtAX -c \"SELECT count(*) FROM pg_ls_waldir()\"">>out.txt
+set /p p1WalSegmentsCount=<out.txt
+del "out.txt" >nul 2>&1
+docker exec p2 bash -c "psql -U postgres -qtAX -c \"SELECT count(*) FROM pg_ls_waldir()\"">>out.txt
+set /p p2WalSegmentsCount=<out.txt
+
+del "out.txt" >nul 2>&1
+echo Container: p1 %p1Ip%:1111
 echo Status: %p1Status%
 echo DbSize: %p1DbSize%
-echo pg_wal size: %p1PgWalSize%
-echo Address: %p1Ip%:1111
+echo Number of wal segments: %p1WalSegmentsCount%
+echo Size of pg_wal directory: %p1PgWalSize%
 echo synchronous_standby_names: %p1_synchronous_standby_names%
 echo number_of_slots: %p1_number_of_slots%
 echo primary_conninfo: %p1_primary_conninfo%
 echo -------------------------
-echo Container: p2
+echo Container: p2 %p2Ip%:2222
 echo Status: %p2Status%
 echo DbSize: %p2DbSize%
-echo pg_wal size: %p2PgWalSize%
-echo Address: %p2Ip%:2222
+echo Number of wal segments: %p2WalSegmentsCount%
+echo Size of pg_wal directory: %p2PgWalSize%
 echo synchronous_standby_names: %p2_synchronous_standby_names%
 echo number_of_slots: %p2_number_of_slots%
 echo primary_conninfo: %p2_primary_conninfo%
