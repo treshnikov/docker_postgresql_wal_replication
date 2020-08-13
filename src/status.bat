@@ -1,4 +1,24 @@
 @echo off
+set p1Ip=
+set p1Status=
+set p1DbSize=
+set p1WalSegmentsCount=
+set p1PgWalSize=
+set p1_synchronous_standby_names=
+set p1_number_of_slots=
+set p1PrimarySlotName=
+set p1_primary_conninfo=
+
+set p2Ip=
+set p2Status=
+set p2DbSize=
+set p2WalSegmentsCount=
+set p2PgWalSize=
+set p2_synchronous_standby_names=
+set p2_number_of_slots=
+set p2PrimarySlotName=
+set p2_primary_conninfo=
+
 echo PostgreSQL cluster status
 echo =========================
 del "out.txt" >nul 2>&1
