@@ -1,5 +1,11 @@
 rem Create PostgreSQL DB cluster 
 
+rem Build docker image with debian, postgresql12 and scripts folder
+cd docker
+docker image rm pg12 -f
+docker build -t pg12 .
+cd ..
+
 rem Remove old containers and unused docker volumes
 docker rm p1 -f
 docker rm p2 -f

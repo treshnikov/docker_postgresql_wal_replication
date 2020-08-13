@@ -1,3 +1,4 @@
+@echo off
 rem Downgrade Second master db to standby
 
 set masterContainerName=""
@@ -26,7 +27,7 @@ if "%p1IsStandby%" == "f" (
     set /a masterServersCount=masterServersCount+1
 )
 
-echo "Detected %masterServersCount% servers which work as master"
+echo [101;93m Detected %masterServersCount% servers which work as master [0m
 
 if "%masterServersCount%" neq "2" (
     exit /B -1
@@ -49,31 +50,31 @@ del "out.txt" >nul 2>&1
 echo db1Size = %db1Size%
 echo db2Size = %db2Size%
 
-if "%db1Size%" GTR "%db2Size%" (
-    echo "DB1 is bigger than DB2"
+if %db1Size% GTR %db2Size% (
+    echo [101;93m DB1 is bigger than DB2 [0m
     set masterContainerName=p1
     set standbyContainerName=p2
 )
 
-if "%db1Size%" LSS "%db2Size%" (
-    echo "DB2 is bigger than DB1"
+if %db1Size% LSS %db2Size% (
+    echo [101;93m DB2 is bigger than DB1 [0m
     set masterContainerName=p2
     set standbyContainerName=p1
 )
 
-if "%db2Size%" EQU "%db1Size%" (
-    echo "DB1 and DB2 are equal"
+if %db2Size% EQU %db1Size% (
+    echo [101;93m DB1 and DB2 are equal [0m
     set masterContainerName=p2
     set standbyContainerName=p1
 )
 
-echo "Supposed master is %masterContainerName% and supposed standby is %standbyContainerName%"
+echo [101;93m Supposed master is %masterContainerName% and supposed standby is %standbyContainerName% [0m
+
+@echo on
 
 rem Restore master node as standby
 rem ==========================================================
 call create_standby.bat %standbyContainerName%
 
-rem Start synchronous replication
-docker exec %masterContainerName% bash -c "psql -U postgres -c \"ALTER SYSTEM SET synchronous_standby_names TO '*'\""
-docker exec %masterContainerName% bash -c "psql -U postgres -c \"SELECT * FROM pg_create_physical_replication_slot('_slot');\""
-docker exec %masterContainerName% bash -c "psql -U postgres -c \"select pg_reload_conf()\""
+rem Let the server start and update synchronous_standby_names 
+call sleep 5 && update_synchronous_standby_names_on_master.bat
