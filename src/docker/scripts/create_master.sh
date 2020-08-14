@@ -12,7 +12,6 @@ psql -U postgres -c "ALTER SYSTEM SET synchronous_commit TO 'remote_apply'"
 
 # Creat a slot for the replication. For more information read an article https://severalnines.com/database-blog/using-postgresql-replication-slots
 psql -U postgres -c "SELECT * FROM pg_create_physical_replication_slot('__slot');"
-psql -U postgres -c "ALTER SYSTEM SET primary_slot_name TO '__slot'"
 
 # Specifies a list of standby servers that can support synchronous replication. This attribute should be set in '' in case the standby server is down to let the main server keep working. In case the standby server is down and this attribute is equal '*' - the transaction on the main server will freeze (as well as a client app that sent this transaction) until the standby server accept this transaction.
 psql -U postgres -c "ALTER SYSTEM SET synchronous_standby_names TO '*'"
