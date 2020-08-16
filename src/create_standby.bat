@@ -38,5 +38,5 @@ rem Recreate container and aim PostgreSQL PGDATA to /var/lib/postgresql/data/pgd
 rem NOTE: This trick is required only using Docker containers. There is no option to stop PostgreSQL service in a container and replace the PGDATA folder because after PostgreSQL service is stopped the container is stopped as well  
 docker stop -t 0 %standbyContainerName%
 docker rm %standbyContainerName% -f
-docker run -d --name %standbyContainerName% --network=pg-cluster -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=postgres -e PGDATA=/var/lib/postgresql/data/pgdata2 -p %containerPort%:5432 -v %volumeName%:/var/lib/postgresql/data pg12 && docker exec %standbyContainerName% bash -c "chown -R postgres:postgres /var/lib/postgresql/data/pgdata2 && chown -R postgres:postgres /var/lib/postgresql/data/winccoa && rm -rf /var/lib/postgresql/data/pgdata"
+docker run -d --name %standbyContainerName% --network=pg-cluster -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=postgres -e PGDATA=/var/lib/postgresql/data/pgdata2 -p %containerPort%:5432 -v %volumeName%:/var/lib/postgresql/data pg12 && docker exec %standbyContainerName% bash -c "chown -R postgres:postgres /var/lib/postgresql/data/pgdata2 && rm -rf /var/lib/postgresql/data/pgdata"
 
