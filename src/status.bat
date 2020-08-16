@@ -1,5 +1,4 @@
 @echo off
-set p1Ip=
 set p1Status=
 set p1DbSize=
 set p1WalSegmentsCount=
@@ -9,7 +8,6 @@ set p1_number_of_slots=
 set p1PrimarySlotName=
 set p1_primary_conninfo=
 
-set p2Ip=
 set p2Status=
 set p2DbSize=
 set p2WalSegmentsCount=
@@ -27,13 +25,6 @@ set /p p1Status=<out.txt
 del "out.txt" >nul 2>&1
 docker exec p2 bash -c "psql -U postgres -qtAX -c \"SELECT CASE WHEN pg_is_in_recovery() = 't' THEN 'STANDBY' WHEN pg_is_in_recovery() = 'f' THEN 'MASTER' ELSE '?' END \"">>out.txt
 set /p p2Status=<out.txt
-
-del "out.txt" >nul 2>&1
-docker inspect --format="{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}" p1 >> out.txt
-set /p p1Ip=<out.txt
-del "out.txt" >nul 2>&1
-docker inspect --format="{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}" p2 >> out.txt
-set /p p2Ip=<out.txt
 
 del "out.txt" >nul 2>&1
 docker exec p1 bash -c "psql -U postgres -qtAX -c \"show synchronous_standby_names\"">>out.txt
@@ -92,7 +83,7 @@ docker exec p2 bash -c "psql -U postgres -qtAX -c \"show primary_slot_name\"">>o
 set /p p2PrimarySlotName=<out.txt
 
 del "out.txt" >nul 2>&1
-echo Container: p1 %p1Ip%:1111
+echo Container: p1
 echo Status: %p1Status%
 echo DbSize: %p1DbSize%
 echo Number of wal segments: %p1WalSegmentsCount%
@@ -102,7 +93,7 @@ echo number_of_slots: %p1_number_of_slots%
 echo primary_slot_name: %p1PrimarySlotName%
 echo primary_conninfo: %p1_primary_conninfo%
 echo -------------------------
-echo Container: p2 %p2Ip%:2222
+echo Container: p2
 echo Status: %p2Status%
 echo DbSize: %p2DbSize%
 echo Number of wal segments: %p2WalSegmentsCount%

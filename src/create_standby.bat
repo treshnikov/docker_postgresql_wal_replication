@@ -1,47 +1,42 @@
+ @@ -1,47 +1,41 @@
 rem Create container for the standby db node
 
 rem Set up container name and name of its volume
-set containerName=%1
+set standbyContainerName=%1
+set masterContainerName=
 set containerPort=
-set masterIpAddress=%2
 
-rem Define containerName
+rem Define standbyContainerName
 IF "%1"=="" (
-    set containerName=p2
+    set standbyContainerName=p2
 )
 
-rem Define IP address of the another (master) container
-IF "%masterIpAddress%" == "" (
-    del "out.txt" >nul 2>&1
-    if "%containerName%" == "p1" (
-        docker inspect --format="{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}" p2 >> out.txt
-        set containerPort=1111
-    )
-    if "%containerName%" == "p2" (
-        docker inspect --format="{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}" p1 >> out.txt
-        set containerPort=2222
-    )
-    set /p masterIpAddress=<out.txt
-    del "out.txt" >nul 2>&1
+rem Define container port
+if "%standbyContainerName%" == "p1" (
+    set containerPort=1111
+    set masterContainerName=p2
 )
-echo "Master IP address is %masterIpAddress%"
+if "%standbyContainerName%" == "p2" (
+    set containerPort=2222
+    set masterContainerName=p1
+)
 
 rem Define volume name
 set /a rand=%random% %%100000
 set volumeName=volume_%rand%
-echo "Create standby db in %containerName% container with volume %volumeName%"
+echo "Create standby db in %standbyContainerName% container with volume %volumeName%"
 
 rem Create container for the stanby node
-docker rm %containerName% -f
+docker rm %standbyContainerName% -f
 docker volume create %volumeName%
-docker run -d --name %containerName% -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=postgres -e PGDATA=/var/lib/postgresql/data/pgdata -p %containerPort%:5432 -v %volumeName%:/var/lib/postgresql/data pg12
+docker run -d --name %standbyContainerName% --network=pg-cluster -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=postgres -e PGDATA=/var/lib/postgresql/data/pgdata -p %containerPort%:5432 -v %volumeName%:/var/lib/postgresql/data pg12
 
 rem Restore DB from the master DB into direcory pgdata2
-docker exec %containerName% /scripts/create_standby.sh %masterIpAddress% 
+docker exec %standbyContainerName% /scripts/create_standby.sh %masterContainerName% 
 
 rem Recreate container and aim PostgreSQL PGDATA to /var/lib/postgresql/data/pgdata2 folder
 rem NOTE: This trick is required only using Docker containers. There is no option to stop PostgreSQL service in a container and replace the PGDATA folder because after PostgreSQL service is stopped the container is stopped as well  
-docker stop -t 0 %containerName%
-docker rm %containerName% -f
-docker run -d --name %containerName% -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=postgres -e PGDATA=/var/lib/postgresql/data/pgdata2 -p %containerPort%:5432 -v %volumeName%:/var/lib/postgresql/data pg12 && docker exec %containerName% bash -c "chown -R postgres:postgres /var/lib/postgresql/data/pgdata2 && rm -rf /var/lib/postgresql/data/pgdata"
+docker stop -t 0 %standbyContainerName%
+docker rm %standbyContainerName% -f
+docker run -d --name %standbyContainerName% --network=pg-cluster -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=postgres -e PGDATA=/var/lib/postgresql/data/pgdata2 -p %containerPort%:5432 -v %volumeName%:/var/lib/postgresql/data pg12 && docker exec %standbyContainerName% bash -c "chown -R postgres:postgres /var/lib/postgresql/data/pgdata2 && chown -R postgres:postgres /var/lib/postgresql/data/winccoa && rm -rf /var/lib/postgresql/data/pgdata"
 

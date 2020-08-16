@@ -6,11 +6,15 @@ docker rm p2 -f
 docker image rm pg12 -f
 docker image prune -f
 docker volume prune -f
+docker network rm pg-cluster
 
 rem Build docker image with debian, postgresql12 and scripts folder
 cd docker 
 docker build -t pg12 .
 cd ..
+
+rem Create network 
+docker network create pg-cluster
 
 rem Setup Master
 call create_master.bat
