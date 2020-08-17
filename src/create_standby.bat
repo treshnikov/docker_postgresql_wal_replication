@@ -1,4 +1,3 @@
- @@ -1,47 +1,41 @@
 rem Create container for the standby db node
 
 rem Set up container name and name of its volume
