@@ -3,7 +3,6 @@ rem Create PostgreSQL DB cluster
 rem Remove old containers and unused docker volumes
 docker rm p1 -f
 docker rm p2 -f
-docker image rm pg12 -f
 docker image prune -f
 docker volume prune -f
 docker network rm pg-cluster
@@ -22,9 +21,6 @@ call create_master.bat
 rem Setup Stanby
 call create_standby.bat
 
-rem Check replication status. Wait for 1 second to let the servers synchronize.
-docker exec p1 bash -c "sleep 1 && psql -U postgres -x -c \"select * from pg_stat_replication\""
-
 rem Create demo DB
 docker exec p1 bash -c "psql -U postgres -c \"create database test;\""
 docker exec p1 bash -c "psql -U postgres -d test -c \"create table test (i integer);\""
@@ -36,4 +32,8 @@ docker exec p1 bash -c "psql -U postgres -d test -c \"select * from test limit 5
 echo Select demo data on standby
 docker exec p2 bash -c "psql -U postgres -d test -c \"select * from test limit 5;\""
 
+rem Check replication status. Wait for 1 second to let the servers synchronize.
+docker exec p1 bash -c "sleep 1 && psql -U postgres -x -c \"select * from pg_stat_replication\""
+
+rem Print cluster status
 call status.bat

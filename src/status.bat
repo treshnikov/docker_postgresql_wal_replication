@@ -20,66 +20,66 @@ set p2_primary_conninfo=
 echo PostgreSQL cluster status
 echo =========================
 del "out.txt" >nul 2>&1
-docker exec p1 bash -c "psql -U postgres -qtAX -c \"SELECT CASE WHEN pg_is_in_recovery() = 't' THEN 'STANDBY' WHEN pg_is_in_recovery() = 'f' THEN 'MASTER' ELSE '?' END \"">>out.txt
+docker exec p1 bash -c "psql -U postgres -p 1111 -qtAX -c \"SELECT CASE WHEN pg_is_in_recovery() = 't' THEN 'STANDBY' WHEN pg_is_in_recovery() = 'f' THEN 'MASTER' ELSE '?' END \"">>out.txt
 set /p p1Status=<out.txt
 del "out.txt" >nul 2>&1
-docker exec p2 bash -c "psql -U postgres -qtAX -c \"SELECT CASE WHEN pg_is_in_recovery() = 't' THEN 'STANDBY' WHEN pg_is_in_recovery() = 'f' THEN 'MASTER' ELSE '?' END \"">>out.txt
+docker exec p2 bash -c "psql -U postgres -p 2222 -qtAX -c \"SELECT CASE WHEN pg_is_in_recovery() = 't' THEN 'STANDBY' WHEN pg_is_in_recovery() = 'f' THEN 'MASTER' ELSE '?' END \"">>out.txt
 set /p p2Status=<out.txt
 
 del "out.txt" >nul 2>&1
-docker exec p1 bash -c "psql -U postgres -qtAX -c \"show synchronous_standby_names\"">>out.txt
+docker exec p1 bash -c "psql -U postgres -p 1111 -qtAX -c \"show synchronous_standby_names\"">>out.txt
 set /p p1_synchronous_standby_names=<out.txt
 del "out.txt" >nul 2>&1
-docker exec p2 bash -c "psql -U postgres -qtAX -c \"show synchronous_standby_names\"">>out.txt
+docker exec p2 bash -c "psql -U postgres -p 2222 -qtAX -c \"show synchronous_standby_names\"">>out.txt
 set /p p2_synchronous_standby_names=<out.txt
 
 del "out.txt" >nul 2>&1
-docker exec p1 bash -c "psql -U postgres -qtAX -c \"show primary_conninfo\"">>out.txt
+docker exec p1 bash -c "psql -U postgres -p 1111 -qtAX -c \"show primary_conninfo\"">>out.txt
 set /p p1_primary_conninfo=<out.txt
 del "out.txt" >nul 2>&1
-docker exec p2 bash -c "psql -U postgres -qtAX -c \"show primary_conninfo\"">>out.txt
+docker exec p2 bash -c "psql -U postgres -p 2222 -qtAX -c \"show primary_conninfo\"">>out.txt
 set /p p2_primary_conninfo=<out.txt
  
 del "out.txt" >nul 2>&1
-docker exec p1 bash -c "psql -U postgres -qtAX -c \"select count(*) from pg_replication_slots\"">>out.txt
+docker exec p1 bash -c "psql -U postgres -p 1111 -qtAX -c \"select count(*) from pg_replication_slots\"">>out.txt
 set /p p1_number_of_slots=<out.txt
 del "out.txt" >nul 2>&1
-docker exec p2 bash -c "psql -U postgres -qtAX -c \"select count(*) from pg_replication_slots\"">>out.txt
+docker exec p2 bash -c "psql -U postgres -p 2222 -qtAX -c \"select count(*) from pg_replication_slots\"">>out.txt
 set /p p2_number_of_slots=<out.txt
 
 del "out.txt" >nul 2>&1
-docker exec p1 bash -c "psql -U postgres -qtAX -c \"SELECT pg_size_pretty(SUM(pg_database_size(pg_database.datname))) FROM pg_database\"">>out.txt
+docker exec p1 bash -c "psql -U postgres -p 1111 -qtAX -c \"SELECT pg_size_pretty(SUM(pg_database_size(pg_database.datname))) FROM pg_database\"">>out.txt
 set /p p1DbSize=<out.txt
 del "out.txt" >nul 2>&1
-docker exec p2 bash -c "psql -U postgres -qtAX -c \"SELECT pg_size_pretty(SUM(pg_database_size(pg_database.datname))) FROM pg_database\"">>out.txt
+docker exec p2 bash -c "psql -U postgres -p 2222 -qtAX -c \"SELECT pg_size_pretty(SUM(pg_database_size(pg_database.datname))) FROM pg_database\"">>out.txt
 set /p p2DbSize=<out.txt
 
 del "out.txt" >nul 2>&1
-docker exec p1 bash -c "psql -U postgres -qtAX -c \"SELECT pg_size_pretty(SUM(pg_database_size(pg_database.datname))) FROM pg_database\"">>out.txt
+docker exec p1 bash -c "psql -U postgres -p 1111 -qtAX -c \"SELECT pg_size_pretty(SUM(pg_database_size(pg_database.datname))) FROM pg_database\"">>out.txt
 set /p p1DbSize=<out.txt
 del "out.txt" >nul 2>&1
-docker exec p2 bash -c "psql -U postgres -qtAX -c \"SELECT pg_size_pretty(SUM(pg_database_size(pg_database.datname))) FROM pg_database\"">>out.txt
+docker exec p2 bash -c "psql -U postgres -p 2222 -qtAX -c \"SELECT pg_size_pretty(SUM(pg_database_size(pg_database.datname))) FROM pg_database\"">>out.txt
 set /p p2DbSize=<out.txt
 
 del "out.txt" >nul 2>&1
-docker exec p1 bash -c "psql -U postgres -qtAX -c \"select pg_size_pretty(sum((pg_stat_file(concat('pg_wal/',fname))).size)) as total_size from pg_ls_dir('pg_wal') as t(fname);\"">>out.txt
+docker exec p1 bash -c "psql -U postgres -p 1111 -qtAX -c \"select pg_size_pretty(sum((pg_stat_file(concat('pg_wal/',fname))).size)) as total_size from pg_ls_dir('pg_wal') as t(fname);\"">>out.txt
 set /p p1PgWalSize=<out.txt
 del "out.txt" >nul 2>&1
-docker exec p2 bash -c "psql -U postgres -qtAX -c \"select pg_size_pretty(sum((pg_stat_file(concat('pg_wal/',fname))).size)) as total_size from pg_ls_dir('pg_wal') as t(fname);\"">>out.txt
+docker exec p2 bash -c "psql -U postgres -p 2222 -qtAX -c \"select pg_size_pretty(sum((pg_stat_file(concat('pg_wal/',fname))).size)) as total_size from pg_ls_dir('pg_wal') as t(fname);\"">>out.txt
 set /p p2PgWalSize=<out.txt
 
 del "out.txt" >nul 2>&1
-docker exec p1 bash -c "psql -U postgres -qtAX -c \"SELECT count(*) FROM pg_ls_waldir()\"">>out.txt
+docker exec p1 bash -c "psql -U postgres -p 1111 -qtAX -c \"SELECT count(*) FROM pg_ls_waldir()\"">>out.txt
 set /p p1WalSegmentsCount=<out.txt
 del "out.txt" >nul 2>&1
-docker exec p2 bash -c "psql -U postgres -qtAX -c \"SELECT count(*) FROM pg_ls_waldir()\"">>out.txt
+docker exec p2 bash -c "psql -U postgres -p 2222 -qtAX -c \"SELECT count(*) FROM pg_ls_waldir()\"">>out.txt
 set /p p2WalSegmentsCount=<out.txt
 
 del "out.txt" >nul 2>&1
-docker exec p1 bash -c "psql -U postgres -qtAX -c \"show primary_slot_name\"">>out.txt
+docker exec p1 bash -c "psql -U postgres -p 1111 -qtAX -c \"show primary_slot_name\"">>out.txt
 set /p p1PrimarySlotName=<out.txt
 del "out.txt" >nul 2>&1
-docker exec p2 bash -c "psql -U postgres -qtAX -c \"show primary_slot_name\"">>out.txt
+docker exec p2 bash -c "psql -U postgres -p 2222 -qtAX -c \"show primary_slot_name\"">>out.txt
 set /p p2PrimarySlotName=<out.txt
 
 del "out.txt" >nul 2>&1
