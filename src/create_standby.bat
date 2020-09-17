@@ -32,7 +32,7 @@ rem Create container for the stanby node
 docker rm %standbyContainerName% -f
 docker volume create %volumeName%
 docker run -d --name %standbyContainerName% --network=pg-cluster -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=postgres -e PGDATA=/var/lib/postgresql/data/pgdata -e PGPORT=%containerPort% -p %containerPort%:%containerPort% -v %volumeName%:/var/lib/postgresql/data pg12
-timeout 3 >nul
+timeout 10 >nul
 
 set connstr=\"user=postgres password=postgres host=%masterContainerName% port=%masterContainerPort% sslmode=prefer sslcompression=0 gssencmode=prefer krbsrvname=postgres target_session_attrs=any\"
 rem Restore DB from the master DB into direcory pgdata

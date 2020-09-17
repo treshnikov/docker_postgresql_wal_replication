@@ -43,3 +43,4 @@ docker stop %masterContainerName% -t 0
 
 rem Promote standby db
 docker exec %standbyContainerName% runuser -l postgres -c "/scripts/promote_standby_to_master.sh %standbyContainerPort%"
+call update_synchronous_standby_names_on_master.bat
